@@ -1,14 +1,14 @@
-// components/ui/Badge.tsx
+// components/ui/CategoryBadge.tsx
 import { type CategoryColor } from '@/lib/data';
 import { cn } from '@/lib/utils';
 
-interface BadgeProps {
+interface CategoryBadgeProps {
   label: string;
   color: CategoryColor;
   className?: string;
 }
 
-export function Badge({ label, color, className }: BadgeProps) {
+export function CategoryBadge({ label, color, className }: CategoryBadgeProps) {
   return (
     <span
       data-badge={color}

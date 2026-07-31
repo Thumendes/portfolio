@@ -3,15 +3,16 @@
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import {
-  IconDownload,
   IconBrandGithub,
   IconMail,
   IconBriefcase,
   IconMapPin,
   IconSchool,
 } from '@tabler/icons-react';
-import { Button } from '@/components/ui/Button';
+import { LinkButton } from '@/components/ui/LinkButton';
+import { ResumeDropdown } from '@/components/ui/ResumeDropdown';
 import { PulsingDot } from '@/components/effects/PulsingDot';
+import { TechMarquee } from '@/components/effects/TechMarquee';
 
 const Terminal = dynamic(
   () => import('@/components/effects/Terminal').then((m) => ({ default: m.Terminal })),
@@ -67,10 +68,8 @@ const pills = [
 
 export function Hero() {
   return (
-    <section
-      id="sobre"
-      className="max-w-5xl mx-auto px-6 pt-20 pb-24 grid lg:grid-cols-[1fr_auto] gap-12 items-start"
-    >
+    <section id="sobre" className="pt-20 pb-12">
+      <div className="max-w-5xl mx-auto px-6 grid lg:grid-cols-[1fr_auto] gap-12 items-start">
       {/* Left column */}
       <div className="space-y-6">
         <motion.p
@@ -99,21 +98,18 @@ export function Hero() {
         </motion.p>
 
         <motion.div {...fadeUp(0.45)} className="flex flex-wrap gap-3">
-          <Button variant="primary" href="/curriculo.pdf">
-            <IconDownload size={15} />
-            Baixar currículo
-          </Button>
-          <Button
+          <ResumeDropdown />
+          <LinkButton
             variant="secondary"
             href="https://github.com/Thumendes"
           >
             <IconBrandGithub size={15} />
             GitHub
-          </Button>
-          <Button variant="secondary" href="#contato">
+          </LinkButton>
+          <LinkButton variant="secondary" href="#contato">
             <IconMail size={15} />
             Contato
-          </Button>
+          </LinkButton>
         </motion.div>
 
         <motion.div {...fade(0.6)} className="pt-4">
@@ -141,6 +137,16 @@ export function Hero() {
           </motion.div>
         ))}
       </div>
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.7 }}
+        className="mt-12"
+      >
+        <TechMarquee />
+      </motion.div>
     </section>
   );
 }

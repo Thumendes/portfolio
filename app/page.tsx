@@ -1,7 +1,7 @@
 // app/page.tsx
-import { Suspense } from 'react';
 import { Nav } from '@/components/sections/Nav';
 import { Hero } from '@/components/sections/Hero';
+import { Chat } from '@/components/sections/Chat';
 import { Stack } from '@/components/sections/Stack';
 import { HowIWork } from '@/components/sections/HowIWork';
 import { Projects } from '@/components/sections/Projects';
@@ -14,11 +14,10 @@ export default function Home() {
       <Nav />
       <main>
         <Hero />
+        <Chat />
         <Stack />
         <HowIWork />
-        <Suspense>
-          <Projects />
-        </Suspense>
+        <Projects />
         <Timeline />
         <Contact />
       </main>

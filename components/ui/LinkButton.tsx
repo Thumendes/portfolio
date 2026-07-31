@@ -1,4 +1,4 @@
-// components/ui/Button.tsx
+// components/ui/LinkButton.tsx
 import { cn } from '@/lib/utils';
 
 type ButtonVariant = 'primary' | 'secondary' | 'ghost';
@@ -22,9 +22,9 @@ interface NativeButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement
   href?: never;
 }
 
-type ButtonProps = AnchorButtonProps | NativeButtonProps;
+type LinkButtonProps = AnchorButtonProps | NativeButtonProps;
 
-export function Button({ variant = 'secondary', className, children, ...props }: ButtonProps) {
+export function LinkButton({ variant = 'secondary', className, children, ...props }: LinkButtonProps) {
   const classes = cn(base, variants[variant], className);
 
   if ('href' in props && props.href) {

@@ -1,8 +1,11 @@
 import type { Metadata } from 'next';
-import { DM_Serif_Display, Outfit, DM_Mono } from 'next/font/google';
+import { DM_Serif_Display, Outfit, DM_Mono, Geist } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import './globals.css';
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const dmSerifDisplay = DM_Serif_Display({
   weight: '400',
@@ -60,7 +63,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
+    <html lang="pt-BR" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
       <head>
         <ConsoleEasterEgg />
       </head>

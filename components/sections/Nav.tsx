@@ -4,9 +4,17 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { IconDownload, IconMenu2, IconX } from '@tabler/icons-react';
 import { cn } from '@/lib/utils';
+import { ResumeDropdown } from '@/components/ui/ResumeDropdown';
+
+const resumes = [
+  { label: 'Fullstack Dev Web', href: '/curriculo-arthur-dev-web.pdf' },
+  { label: 'Automação & RPA', href: '/curriculo-arthur-automacao-rpa.pdf' },
+  { label: 'Fullstack IA', href: '/curriculo-arthur-fullstack-ia.pdf' },
+] as const;
 
 const links = [
   { label: 'sobre', href: '#sobre' },
+  { label: 'pergunte', href: '#pergunte' },
   { label: 'projetos', href: '#projetos' },
   { label: 'experiência', href: '#experiencia' },
   { label: 'contato', href: '#contato' },
@@ -45,7 +53,7 @@ export function Nav() {
         <div className="max-w-5xl mx-auto px-6 flex items-center justify-between h-14">
           {/* Logo */}
           <a href="#sobre" className="font-mono text-sm font-medium">
-            <span className="text-accent">//</span>
+            <span className="text-accent">{'//'}</span>
             <span className="text-muted"> thumendes</span>
           </a>
 
@@ -60,14 +68,7 @@ export function Nav() {
                 {link.label}
               </a>
             ))}
-            <a
-              href="/curriculo.pdf"
-              download
-              className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted hover:text-foreground transition-colors"
-            >
-              <IconDownload size={14} />
-              currículo
-            </a>
+            <ResumeDropdown className="[&>button]:px-3 [&>button]:py-1.5 [&>button]:text-[13px] [&>button]:bg-transparent [&>button]:text-muted [&>button]:border-transparent [&>button]:hover:text-foreground" />
           </div>
 
           {/* Mobile hamburger */}
@@ -107,7 +108,7 @@ export function Nav() {
             >
               <div className="flex items-center justify-between mb-8">
                 <span className="font-mono text-sm">
-                  <span className="text-accent">//</span>
+                  <span className="text-accent">{'//'}</span>
                   <span className="text-muted"> thumendes</span>
                 </span>
                 <button
@@ -130,14 +131,23 @@ export function Nav() {
                     {link.label}
                   </a>
                 ))}
-                <a
-                  href="/curriculo.pdf"
-                  download
-                  className="inline-flex items-center gap-2 text-[15px] text-muted hover:text-foreground mt-2"
-                >
-                  <IconDownload size={15} />
-                  currículo
-                </a>
+                <div className="mt-2 pt-4 border-t border-border-muted">
+                  <p className="text-[11px] font-mono uppercase tracking-widest text-subtle mb-3">
+                    Currículo
+                  </p>
+                  {resumes.map((r) => (
+                    <a
+                      key={r.href}
+                      href={r.href}
+                      download
+                      onClick={() => setDrawerOpen(false)}
+                      className="flex items-center gap-2 text-[14px] text-muted hover:text-foreground py-1.5"
+                    >
+                      <IconDownload size={14} />
+                      {r.label}
+                    </a>
+                  ))}
+                </div>
               </nav>
             </motion.div>
           </>

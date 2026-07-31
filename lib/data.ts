@@ -1,6 +1,17 @@
 // lib/data.ts
 
-export type CategoryColor = 'blue' | 'amber' | 'coral' | 'teal' | 'green' | 'purple';
+export type CategoryColor =
+  | 'red'
+  | 'coral'
+  | 'amber'
+  | 'yellow'
+  | 'green'
+  | 'teal'
+  | 'cyan'
+  | 'blue'
+  | 'indigo'
+  | 'purple'
+  | 'pink';
 
 export interface ProjectData {
   id: string;
@@ -91,7 +102,7 @@ export const projects: ProjectData[] = [
   {
     id: 'kaptha',
     name: 'Kaptha Agents',
-    badge: { label: 'SaaS · Multi-tenant', color: 'purple' },
+    badge: { label: 'SaaS · Multi-tenant', color: 'indigo' },
     description:
       'Plataforma multi-tenant de agentes de IA com streaming em tempo real, tool use e debounce inteligente de persistência.',
     fullDescription: [
@@ -120,7 +131,7 @@ export const projects: ProjectData[] = [
   {
     id: 'claro-bot',
     name: 'Claro Bot Evo',
-    badge: { label: 'Automação · IA', color: 'amber' },
+    badge: { label: 'Automação · IA', color: 'red' },
     description:
       'Bot WhatsApp para a Claro Brasil com filtro inteligente de resultados via LLM para reduzir ruído nas respostas de atendimento.',
     fullDescription: [
@@ -150,7 +161,7 @@ export const projects: ProjectData[] = [
   {
     id: 'locsystem',
     name: 'LocSystem',
-    badge: { label: 'Android · IA', color: 'coral' },
+    badge: { label: 'Android · IA', color: 'pink' },
     description:
       'App Android com detecção de objetos em tempo real via YOLO e OCR para leitura automática de placas em depósitos.',
     fullDescription: [
@@ -180,7 +191,7 @@ export const projects: ProjectData[] = [
   {
     id: 'gptexto',
     name: 'GPTexto',
-    badge: { label: 'Editor Visual', color: 'teal' },
+    badge: { label: 'Editor Visual', color: 'cyan' },
     description:
       'Editor visual no-code para criação de pipelines de geração de texto com IA, com 15+ tipos de nós e React Flow.',
     fullDescription: [
@@ -242,13 +253,13 @@ export const projects: ProjectData[] = [
 
 export const stack: StackItem[] = [
   { abbr: 'TS', name: 'TypeScript', description: 'strict mode, toda a stack', color: 'blue' },
-  { abbr: 'Nx', name: 'Next.js / React', description: 'App Router, React 19', color: 'teal' },
+  { abbr: 'Nx', name: 'Next.js / React', description: 'App Router, React 19', color: 'cyan' },
   { abbr: 'No', name: 'Node.js / Bun', description: 'APIs, workers, CLIs', color: 'green' },
   { abbr: 'Pr', name: 'Prisma / Drizzle', description: 'MySQL, MariaDB', color: 'amber' },
   { abbr: 'BQ', name: 'BullMQ + Redis', description: 'filas assíncronas', color: 'purple' },
-  { abbr: 'AI', name: 'LLMs / Vercel AI SDK', description: 'Claude, GPT, agentes', color: 'coral' },
-  { abbr: 'Ex', name: 'Expo / React Native', description: 'apps mobile', color: 'blue' },
-  { abbr: 'Pw', name: 'Playwright / Crawlee', description: 'automação e scraping', color: 'green' },
+  { abbr: 'AI', name: 'LLMs / Vercel AI SDK', description: 'Claude, GPT, agentes', color: 'pink' },
+  { abbr: 'Ex', name: 'Expo / React Native', description: 'apps mobile', color: 'indigo' },
+  { abbr: 'Pw', name: 'Playwright / Crawlee', description: 'automação e scraping', color: 'coral' },
 ];
 
 // ── Timeline ─────────────────────────────────────────────────────────────────
@@ -344,8 +355,8 @@ export const contact: ContactItem[] = [
   {
     icon: 'brand-linkedin',
     label: 'LinkedIn',
-    value: 'arthur-mendes-pereira-dev',
-    href: 'https://linkedin.com/in/arthur-mendes-pereira-dev',
+    value: 'thumendes',
+    href: 'https://linkedin.com/in/thumendes',
   },
   {
     icon: 'brand-whatsapp',

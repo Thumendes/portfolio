@@ -61,7 +61,7 @@ export function Footer() {
   return (
     <footer className="max-w-5xl mx-auto px-6 py-6 flex items-center justify-between border-t border-border">
       <span className="text-[12px] font-mono text-subtle">
-        // thumendes.com.br · 2026
+        {'// thumendes.com.br · 2026'}
       </span>
       <span className="text-[12px] font-mono text-subtle">
         BH · disponível para oportunidades

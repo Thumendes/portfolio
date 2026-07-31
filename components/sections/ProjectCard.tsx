@@ -1,29 +1,29 @@
 // components/sections/ProjectCard.tsx
+import Link from 'next/link';
 import { type ProjectData } from '@/lib/data';
-import { Badge } from '@/components/ui/Badge';
+import { CategoryBadge } from '@/components/ui/CategoryBadge';
 import { Tag } from '@/components/ui/Tag';
 import { cn } from '@/lib/utils';
 
 interface ProjectCardProps {
   project: ProjectData;
-  onClick: () => void;
   className?: string;
 }
 
-export function ProjectCard({ project, onClick, className }: ProjectCardProps) {
+export function ProjectCard({ project, className }: ProjectCardProps) {
   if (project.featured) {
     return (
-      <button
-        onClick={onClick}
+      <Link
+        href={`/projetos/${project.id}`}
         className={cn(
-          'text-left w-full p-5 rounded-xl border border-border bg-background hover:bg-secondary transition-colors',
+          'text-left w-full p-5 rounded-xl border border-border bg-background hover:bg-secondary transition-colors block',
           'lg:col-span-2 grid lg:grid-cols-2 gap-6',
           className,
         )}
       >
         {/* Left column */}
         <div className="flex flex-col gap-3">
-          <Badge label={project.badge.label} color={project.badge.color} />
+          <CategoryBadge label={project.badge.label} color={project.badge.color} />
           <h3 className="text-[16px] font-medium font-body text-foreground">
             {project.name}
           </h3>
@@ -49,19 +49,19 @@ export function ProjectCard({ project, onClick, className }: ProjectCardProps) {
             </div>
           ))}
         </div>
-      </button>
+      </Link>
     );
   }
 
   return (
-    <button
-      onClick={onClick}
+    <Link
+      href={`/projetos/${project.id}`}
       className={cn(
         'text-left w-full p-5 rounded-xl border border-border bg-background hover:bg-secondary transition-colors flex flex-col gap-3',
         className,
       )}
     >
-      <Badge label={project.badge.label} color={project.badge.color} />
+      <CategoryBadge label={project.badge.label} color={project.badge.color} />
       <h3 className="text-[16px] font-medium font-body text-foreground">
         {project.name}
       </h3>
@@ -73,6 +73,6 @@ export function ProjectCard({ project, onClick, className }: ProjectCardProps) {
           <Tag key={tag}>{tag}</Tag>
         ))}
       </div>
-    </button>
+    </Link>
   );
 }
