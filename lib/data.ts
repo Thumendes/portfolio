@@ -299,6 +299,46 @@ export const projects: ProjectData[] = [
     Invoice --> Email["Resend\\nE-mail"]`,
     links: {},
   },
+  {
+    id: 'olimpya',
+    name: 'Olimpya',
+    badge: { label: 'Automação · IA', color: 'amber' },
+    description:
+      'Monitoramento e registro automático de licitações de seguro — detecta editais relevantes no PNCP/Compras BR e garante a reserva nos sistemas das seguradoras via RPA em menos de 60 segundos.',
+    fullDescription: [
+      'Olimpya monitora continuamente portais de compras públicas brasileiros (PNCP, Compras BR) em busca de editais relevantes ao ramo de seguros, extrai os dados necessários (CNPJ, objeto, datas, valor, anexos) e registra automaticamente o interesse da corretora nos sistemas das seguradoras parceiras (Mapfre e Porto Seguro) via RPA. É uma corrida contra outras corretoras pelo mesmo edital: quem registra primeiro garante a preferência, então detectar e completar o registro em menos de ~60 segundos após a publicação é o diferencial competitivo do produto.',
+      'É um monorepo Turborepo/Bun em Arquitetura Hexagonal (Ports & Adapters) — o domínio não tem nenhuma dependência externa, e adapters concretos conectam esse núcleo a BullMQ, Drizzle/MySQL, Playwright/Patchright, Cloudflare R2 e LLMs. O pipeline tem quatro processos: o scraper detecta editais e publica numa fila, o worker enriquece (resolve CNPJ, baixa anexos para o R2, persiste) e notifica via SSE, e o rpa-worker consome a fila de registro e dirige o navegador nos sistemas das seguradoras — em modo dry-run por padrão.',
+      'Classificadores LLM via Vercel AI Gateway filtram relevância dos editais, extraem CNPJ ausente do texto e classificam o ramo do seguro. A automação usa Playwright/Patchright com evasão anti-detecção, resolve reCAPTCHA (2Captcha) no fluxo Porto Seguro e ordena a tentativa de registro entre seguradoras por horário. O painel Next.js mostra um feed em tempo real via SSE, saúde dos dispositivos de RPA e uma trilha de auditoria completa.',
+    ],
+    highlights: [
+      'Detecta e registra um edital relevante em menos de ~60 segundos, competindo pela reserva com outras corretoras',
+      'Arquitetura Hexagonal: domínio sem dependências externas, adapters plugáveis para filas, banco, storage e LLM',
+      'Classificadores LLM (Vercel AI Gateway) filtram relevância, extraem CNPJ e classificam o ramo do seguro',
+      'RPA com Playwright/Patchright e evasão anti-detecção, com modo dry-run por padrão antes de registrar de verdade',
+      'Feed em tempo real via SSE, painel de saúde dos dispositivos de RPA e trilha de auditoria completa',
+    ],
+    challenges: [
+      'Detectar e completar o registro em menos de 60 segundos, correndo contra outras corretoras pelo mesmo edital',
+      'Automatizar dois sistemas de seguradora completamente diferentes (Mapfre SINEP e Porto Processo Digital) com RPA resiliente a mudanças de layout',
+      'Resolver CNPJ ausente no payload de portais como Compras BR extraindo do texto do edital via regex/LLM',
+    ],
+    learnings: [
+      'Arquitetura Hexagonal (Ports & Adapters) para isolar regras de negócio de infraestrutura substituível (filas, banco, RPA, LLM)',
+      'Uso de LLM como classificador de relevância e extrator estruturado, com estratégia fail-open para não perder editais em caso de erro',
+    ],
+    tags: ['Bun', 'Next.js 16', 'Elysia', 'oRPC', 'Drizzle', 'BullMQ', 'Playwright', 'AI Gateway'],
+    diagram: `graph TD
+    Scraper["scraper\\n(PNCP/Compras BR)"] --> DetQueue["detection-queue\\n(BullMQ)"]
+    DetQueue --> Worker["worker\\nenriquecimento"]
+    Worker --> R2[("Cloudflare R2")]
+    Worker --> DB[("MySQL\\nDrizzle")]
+    Worker --> RegQueue["registration-queue"]
+    Worker --> Server["server\\nSSE"]
+    Server --> Web["Next.js\\nDashboard"]
+    RegQueue --> RPA["rpa-worker\\nMapfre / Porto"]
+    RPA --> LLM["AI Gateway\\nclassificação"]`,
+    links: {},
+  },
 ];
 
 // ── Stack ────────────────────────────────────────────────────────────────────
