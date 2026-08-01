@@ -264,29 +264,39 @@ export const projects: ProjectData[] = [
     name: 'Bro Energy',
     badge: { label: 'Automação · Fintech', color: 'green' },
     description:
-      'RPA para automação de coleta em portal de distribuidoras de energia com resolução de captcha e emissão automática de boletos.',
+      'Plataforma de gestão de energia para clientes de geração distribuída — extrai faturas da concessionária automaticamente, recalcula com desconto e emite cobrança (boleto/PIX) por WhatsApp e e-mail.',
     fullDescription: [
-      'Bro Energy automatiza o processo de coleta de dados de consumo e emissão de boletos em portais de distribuidoras de energia. Playwright navega nos portais, resolve captchas e extrai os dados.',
-      'Crawlee gerencia filas de scraping com retry exponential backoff e rate limiting. Os boletos são gerados e enviados por email com Nodemailer após validação dos dados extraídos.',
+      'Bro Energy administra unidades consumidoras de clientes de geração distribuída (GD), acessa em nome deles o portal da concessionária (CEMIG), coleta as faturas mensais, recalcula o valor com desconto sobre a tarifa original e gera uma fatura própria — PDF, boleto e PIX via Omie — entregue ao cliente por WhatsApp e/ou e-mail. Automatiza um processo hoje manual em empresas de GD, escalado para múltiplas unidades consumidoras e credenciais.',
+      'É um monorepo Turborepo com apps/web (Next.js 15, painel admin), apps/bot (worker Playwright com stealth que extrai faturas) e apps/invoice (worker em modo cluster que gera fatura, boleto e PIX), comunicando via filas BullMQ/Redis. Os workers não acessam o Prisma diretamente — chamam mutations de um pacote tRPC compartilhado, centralizando toda a persistência e regra de negócio num único lugar.',
+      'Um cron diário dispara a extração para todas as credenciais ativas: o bot faz login, resolve captcha, baixa e parseia o XML da fatura e sobe o arquivo pro Cloudflare R2. O worker de fatura calcula a tarifa (Cheia, Compensável ou Autoconsumo) sempre multiplicando pelo kWh de "Energia SCEE s/ ICMS", gera o PDF, cria a cobrança no Omie e entrega ao cliente; um monitor diário sincroniza o status de pagamento.',
     ],
-    highlights: [],
+    highlights: [
+      'Robô Playwright + stealth faz login, resolve captcha e extrai faturas direto do portal da concessionária',
+      'Cálculo de tarifa (Cheia, Compensável ou Autoconsumo) sempre multiplicado pelo kWh de "Energia SCEE s/ ICMS"',
+      'Geração de boleto e PIX via Omie, com monitor diário sincronizando status de pagamento',
+      'Workers não acessam o banco diretamente — toda persistência passa por um cliente tRPC interno',
+      'Entrega da fatura ao cliente via WhatsApp (Evolution API) e/ou e-mail (Resend)',
+    ],
     challenges: [
-      'Resolver captchas variáveis entre distribuidoras de forma confiável e automatizada',
-      'Manter sessão browser ativa em portais com timeout curto durante extrações longas',
+      'Evasão de detecção de automação no login da concessionária com Playwright + stealth, sem quebrar com atualizações de dependência',
+      'Worker de fatura rodando em modo cluster (um processo por CPU) sem estado compartilhado em memória entre processos',
+      'Manter a regra fixa de cálculo (kWh de Energia SCEE s/ ICMS como multiplicador) consistente entre os três tipos de tarifa',
     ],
     learnings: [
-      'Estratégias de resiliência em scraping com retry, circuit breaker e session refresh',
-      'Gerenciamento de contexto browser Playwright para operações de longa duração',
+      'Arquitetura de workers como clientes tRPC — centralizar persistência e regra de negócio fora dos processos de automação',
+      'Uso de filas BullMQ com sufixo de ambiente para isolar filas de dev e produção no mesmo Redis',
     ],
-    tags: ['Node.js', 'Playwright', 'Crawlee', 'BullMQ', 'Redis', 'Nodemailer'],
+    tags: ['Next.js 15', 'Playwright', 'BullMQ', 'tRPC', 'Prisma', 'Omie'],
     diagram: `graph TD
-    Cron["Cron\\nScheduler"] --> Queue["BullMQ\\nQueue"]
-    Queue --> RPA["Playwright\\nRPA"]
-    RPA --> Captcha["Captcha\\nSolver"]
-    Captcha --> Portal["Energy\\nPortal"]
-    Portal --> Extract["Data\\nExtraction"]
-    Extract --> Boleto["Boleto\\nGenerator"]
-    Boleto --> Email["Nodemailer\\nDelivery"]`,
+    Web["Next.js Web\\n(painel admin)"] --> TRPC["tRPC\\nRouters"]
+    TRPC --> DB[("MySQL\\nPrisma")]
+    TRPC --> Queues["BullMQ\\nFilas"]
+    Queues --> Bot["apps/bot\\nPlaywright + stealth"]
+    Queues --> Invoice["apps/invoice\\ncluster mode"]
+    Bot --> R2[("Cloudflare R2")]
+    Invoice --> Omie["Omie\\nboleto/PIX"]
+    Invoice --> WhatsApp["Evolution API\\nWhatsApp"]
+    Invoice --> Email["Resend\\nE-mail"]`,
     links: {},
   },
 ];
