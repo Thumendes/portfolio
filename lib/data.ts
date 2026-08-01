@@ -107,28 +107,39 @@ export const projects: ProjectData[] = [
     name: 'Kaptha Agents',
     badge: { label: 'SaaS · Multi-tenant', color: 'indigo' },
     description:
-      'Plataforma multi-tenant de agentes de IA com streaming em tempo real, tool use e debounce inteligente de persistência.',
+      'Plataforma SaaS multi-tenant para criar e operar assistentes de IA em canais de atendimento, com integração ao Chatwoot, debounce de mensagens e regras de comportamento automáticas.',
     fullDescription: [
-      'Kaptha Agents permite que empresas criem e gerenciem agentes de IA customizados para seus clientes. Cada tenant tem agentes, ferramentas e histórico isolados.',
-      'O sistema usa Vercel AI SDK com streaming SSE. Um middleware de debounce agrupa tokens antes de persistir no Redis, reduzindo escritas sem perder estado de conversa em caso de falha.',
+      'Kaptha Agents é uma plataforma SaaS multi-tenant para criar, configurar e operar assistentes de IA em canais de atendimento ao cliente, com foco inicial em integração com o Chatwoot. Organizações criam assistentes com instruções personalizadas, publicam em canais Chatwoot e definem regras automáticas de comportamento — debounce, inatividade, encerramento e reativação.',
+      'O sistema é monorepo Turborepo (apps/web em Next.js 16 com oRPC + TanStack Query, apps/server em Elysia) e é totalmente orientado a eventos: um webhook do Chatwoot chega, as mensagens são acumuladas com debounce, mídia é processada (Whisper para áudio, visão para imagens), um ToolLoopAgent do AI SDK v6 roda com Claude Sonnet via AI Gateway com as ferramentas do Chatwoot disponíveis, e a resposta é enviada de volta em streaming.',
+      'Cada conversa vive como sessão no Redis com TTL, e workers BullMQ cuidam da resposta de IA, mensagens de inatividade, encerramento e resumo de conversas arquivadas. A configuração do assistente é separada de `assistant_version` (snapshot imutável publicado via deployment), permitindo rollback fiel sem afetar conversas ativas.',
     ],
-    highlights: [],
+    highlights: [
+      'Sistema orientado a eventos: webhook Chatwoot → debounce → processamento de mídia → ToolLoopAgent → resposta em streaming',
+      'ToolLoopAgent do AI SDK v6 com Claude Sonnet via AI Gateway e ferramentas Chatwoot sempre disponíveis',
+      'Transcrição de áudio com Whisper e leitura de imagens via visão, com mídia persistida no Cloudflare R2',
+      'Regras de comportamento configuráveis por assistente: debounce, inatividade, encerramento e reativação',
+      'Snapshot imutável de versões com deployments — rollback sem afetar conversas em andamento',
+    ],
     challenges: [
-      'Streaming com debounce sem perder tokens entre flushes em caso de desconexão',
-      'Isolamento de estado de agente entre múltiplos tenants em tempo real',
+      'Debounce e acúmulo de mensagens em sessões Redis sem perder contexto entre mensagens fragmentadas do cliente',
+      'Diferenciar mensagens do próprio bot das de atendentes humanos via botUserId, evitando loops e marcando sessões como transferidas corretamente',
+      'Orquestrar workers BullMQ para resposta de IA, inatividade e encerramento sem condições de corrida entre jobs da mesma sessão',
     ],
     learnings: [
-      'Padrões de streaming com Vercel AI SDK e SSE no App Router do Next.js',
-      'Debounce de escritas em Redis para balancear latência e durabilidade',
+      'Arquitetura orientada a eventos com BullMQ para debounce, inatividade e encerramento de conversas de forma assíncrona',
+      'oRPC + TanStack Query para uma API type-safe de ponta a ponta entre Next.js e Elysia',
     ],
-    tags: ['Next.js', 'Vercel AI SDK', 'Redis', 'BullMQ', 'Prisma', 'Multi-tenant'],
-    diagram: `graph LR
-    Client["Next.js\\nClient"] --> Stream["Streaming\\nAPI Route"]
-    Stream --> Agent["AI Agent\\n(Vercel AI SDK)"]
-    Agent --> LLM["Claude /\\nGPT-4o"]
-    Agent --> Tools["Tool Use\\n(search, scrape)"]
-    Stream --> Debounce["Debounce\\nMiddleware"]
-    Debounce --> Redis[("Redis\\nCache")]`,
+    tags: ['Elysia', 'Next.js 16', 'oRPC', 'Drizzle', 'BullMQ', 'AI SDK v6', 'Chatwoot', 'Better Auth'],
+    diagram: `graph TD
+    Chatwoot["Chatwoot\\nWebhook"] --> Webhook["POST /webhooks/\\nchatwoot"]
+    Webhook --> Session[("Redis\\nSession")]
+    Webhook --> Debounce["Debounce\\n(BullMQ)"]
+    Debounce --> Worker["ai-response\\nWorker"]
+    Worker --> Media["Whisper /\\nVision"]
+    Worker --> Agent["ToolLoopAgent\\n(AI SDK v6)"]
+    Agent --> Claude["Claude Sonnet\\n(AI Gateway)"]
+    Agent --> Tools["Chatwoot\\nTools"]
+    Agent --> ChatwootOut["Chatwoot\\nreply"]`,
     links: {},
   },
   {
