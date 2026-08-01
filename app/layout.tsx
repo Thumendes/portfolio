@@ -29,6 +29,7 @@ const dmMono = DM_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://thumendes.com.br'),
   title: 'Arthur Mendes — Desenvolvedor Full-Stack Sênior',
   description:
     'Desenvolvedor full-stack com 4+ anos de experiência. TypeScript, Next.js, Node.js, BullMQ, LLMs. Belo Horizonte, MG.',
@@ -36,11 +37,14 @@ export const metadata: Metadata = {
     title: 'Arthur Mendes — Desenvolvedor Full-Stack Sênior',
     description: 'Construo sistemas complexos de ponta a ponta.',
     url: 'https://thumendes.com.br',
+    siteName: 'thumendes.com.br',
+    locale: 'pt_BR',
     type: 'website',
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: 'Arthur Mendes — Desenvolvedor Full-Stack Sênior',
+    description: 'Construo sistemas complexos de ponta a ponta.',
   },
 };
 
