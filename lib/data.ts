@@ -339,6 +339,45 @@ export const projects: ProjectData[] = [
     RPA --> LLM["AI Gateway\\nclassificação"]`,
     links: {},
   },
+  {
+    id: 'bh-escape',
+    name: 'BH Escape',
+    badge: { label: 'Automação · Integrações', color: 'teal' },
+    description:
+      'Backoffice de automação de reservas para uma rede de escape rooms — sincroniza o Bookeo, confirma clientes por WhatsApp via Kaptha, coleta fotos no Drive e emite vendas fiscais na Conta Azul.',
+    fullDescription: [
+      'BH Escape é o painel operacional interno de uma rede de escape rooms, integrando quatro sistemas que não conversam entre si: Bookeo (onde o cliente efetivamente agenda), WhatsApp via agente de IA Kaptha (confirmação e envio de fotos), Google Drive (armazenamento de fotos do evento) e Conta Azul (ERP fiscal). O sistema sincroniza reservas do Bookeo, dispara confirmações automáticas, cria pastas de upload de fotos e emite vendas fiscais mapeando cada sala reservada a um serviço fiscal específico.',
+      'É um monorepo Turborepo/Bun com apps/web (Next.js 16, dashboard + oRPC + webhooks) e apps/jobs (worker BullMQ sem HTTP), com pacotes isolando cada integração — bookeo e conta-azul como clientes HTTP sem conhecimento de domínio, packages/api concentrando toda a lógica de negócio em routers oRPC. Autenticação em duas camadas: sessão Better-Auth para o dashboard, e segredo compartilhado ou token HMAC assinado para webhooks e upload público sem login.',
+      'A sincronização do Bookeo roda a cada hora; um job diário às 8h enfileira confirmação por WhatsApp via Kaptha (uma mensagem por cliente, espaçadas em 30s), e o webhook do Kaptha atualiza o status da reserva pelo kapthaAskId. A confirmação de pagamento dispara a emissão de venda na Conta Azul — se falhar, o erro é logado mas não reverte a confirmação já feita. Fotos do evento usam um link tokenizado (HMAC, válido 24h) para o cliente subir direto ao Google Drive, sem precisar de login.',
+    ],
+    highlights: [
+      'Integra 4 sistemas que não conversam entre si: Bookeo, WhatsApp (Kaptha), Google Drive e Conta Azul',
+      'Confirmação automática de reserva por WhatsApp via agente Kaptha, com callback atualizando o status pelo kapthaAskId',
+      'Emissão de venda fiscal na Conta Azul mapeando cada sala reservada a um serviço fiscal específico',
+      'Upload de fotos do evento via link tokenizado (HMAC, válido 24h), sem exigir login do cliente',
+      'Worker BullMQ separado (apps/jobs) para sync horário, confirmação diária e envio de mensagens com rate-limit',
+    ],
+    challenges: [
+      'Sincronizar reservas do Bookeo e manter o estado consistente entre 4 sistemas externos sem uma camada transacional entre eles',
+      'Emissão fiscal não-transacional com o pagamento: lidar com falha na Conta Azul sem reverter a confirmação já feita',
+      'Autenticação em duas camadas — sessão de usuário para o dashboard e HMAC/segredo compartilhado para webhooks e upload público',
+    ],
+    learnings: [
+      'Integração de múltiplos serviços externos (agendamento, WhatsApp, storage, ERP fiscal) mantendo cada cliente HTTP isolado sem conhecimento de domínio',
+      'Uso de tokens HMAC assinados como alternativa leve à autenticação de sessão em fluxos públicos, como o upload de fotos',
+    ],
+    tags: ['Next.js 16', 'oRPC', 'Drizzle', 'BullMQ', 'Better-Auth', 'Bookeo', 'Conta Azul'],
+    diagram: `graph LR
+    Bookeo["Bookeo"] -->|sync horário| Jobs["apps/jobs\\nBullMQ"]
+    Jobs --> DB[("MySQL\\nDrizzle")]
+    Web["Next.js\\nDashboard"] --> DB
+    Web -->|oRPC| API["packages/api"]
+    API --> ContaAzul["Conta Azul\\nERP fiscal"]
+    API --> Drive["Google Drive\\nfotos"]
+    Jobs -->|kapthaAsk| Kaptha["Kaptha\\nWhatsApp"]
+    Kaptha -->|callback| Web`,
+    links: {},
+  },
 ];
 
 // ── Stack ────────────────────────────────────────────────────────────────────
