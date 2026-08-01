@@ -186,29 +186,38 @@ export const projects: ProjectData[] = [
     name: 'LocSystem',
     badge: { label: 'Android · IA', color: 'pink' },
     description:
-      'App Android com detecção de objetos em tempo real via YOLO e OCR para leitura automática de placas em depósitos.',
+      'App Android para localização de veículos inadimplentes em campo — detecção de placas em tempo real via YOLO + OCR, cruzamento com contratos e alerta imediato para a assessoria jurídica.',
     fullDescription: [
-      'LocSystem automatiza a leitura de placas de localização em depósitos e armazéns. CameraX captura frames contínuos, YOLO v8 detecta placas e ML Kit OCR extrai o texto.',
-      'O modelo YOLO roda on-device via TFLite com latência <200ms por frame, funcionando offline. Dados são sincronizados em batch quando há conectividade disponível.',
+      'LocSystem é usado por agentes de campo de assessorias jurídicas e carteiras de crédito para localizar veículos com contratos em aberto durante rondas. A câmera captura frames, um modelo YOLO detecta placas, o OCR lê o texto e a placa é consultada num banco de contratos via API — se houver contrato ativo, o app toca um alerta, registra a incidência com foto e geolocalização e exibe os dados da assessoria com atalho direto para o WhatsApp.',
+      'O pipeline roda a ~3 FPS com confidence threshold dinâmico (0.3–0.6, mais permissivo em cenas tranquilas e mais rígido em cenas movimentadas) e NMS para reduzir falsos positivos. Após o recorte e pré-processamento da placa, o OCR roda via ML Kit em thread separada, com debounce de 2s e validação por regex dos dois padrões de placa brasileira (antigo e Mercosul) antes de qualquer consulta.',
+      'A arquitetura segue Clean Architecture com MVVM em Kotlin/Jetpack Compose: UI orientada a `UiState` selado (Idle/Loading/Success/Error) coletado via StateFlow, repositórios sobre Retrofit + DataStore, autenticação por cookie de sessão injetada globalmente via interceptor, e monitoramento de conectividade centralizado num ViewModel único.',
     ],
-    highlights: [],
+    highlights: [
+      'Detecção de placas em tempo real com YOLO (TFLite) + OCR via ML Kit, throttle de ~3 FPS',
+      'Confidence threshold dinâmico (0.3–0.6) e NMS para reduzir falsos positivos em cenas movimentadas',
+      'Validação por regex dos dois padrões de placa brasileira (antigo e Mercosul) antes de qualquer consulta',
+      'Registro automático de incidência com foto, geolocalização e cruzamento com contrato ativo',
+      'Atalho direto para WhatsApp da assessoria jurídica responsável, com mensagem pré-formatada',
+    ],
     challenges: [
-      'Balancear frequência de inferência YOLO com consumo de bateria em uso prolongado',
-      'OCR confiável em condições de iluminação variável e ângulos oblíquos de captura',
+      'Balancear confidence threshold e NMS dinamicamente para reduzir falsos positivos sem perder sensibilidade em cenas tranquilas',
+      'Rodar detecção + OCR + consulta de API em tempo real sobre o stream da câmera sem travar a UI',
+      'Monitoramento de conectividade centralizado para lidar com quedas de rede em campo sem quebrar o fluxo de detecção',
     ],
     learnings: [
-      'Deploy de modelos TFLite com quantização INT8 para reduzir tamanho e aumentar throughput',
-      'Pipeline de pré-processamento (crop, resize, normalização) para maximizar precisão do OCR',
+      'Inferência TFLite on-device com pré-processamento (resize, normalização, NMS) otimizado para tempo real',
+      'Clean Architecture + MVVM em Compose com UiState selado para gerenciar estados assíncronos de forma previsível',
     ],
-    tags: ['Kotlin', 'TFLite', 'YOLO v8', 'ML Kit OCR', 'CameraX', 'Room DB'],
+    tags: ['Kotlin', 'Jetpack Compose', 'TensorFlow Lite', 'CameraX', 'ML Kit OCR', 'Retrofit'],
     diagram: `graph TD
-    Camera["CameraX\\nCapture"] --> YOLO["YOLO v8\\n(TFLite on-device)"]
-    YOLO --> Detect["Bounding Box\\nDetection"]
-    Detect --> Crop["Image\\nCropping"]
+    Camera["CameraX\\nImageAnalysis"] --> YOLO["YOLO\\n(TFLite)"]
+    YOLO --> NMS["Threshold +\\nNMS"]
+    NMS --> Crop["Crop +\\nPré-processamento"]
     Crop --> OCR["ML Kit\\nOCR"]
-    OCR --> Validate["Text\\nValidation"]
-    Validate --> Room[("Room DB\\nLocal")]
-    Room --> Sync["Batch\\nSync API"]`,
+    OCR --> Validate["Regex\\nPlaca BR"]
+    Validate --> Search["GET /api/search\\n/{plate}"]
+    Search -->|encontrado| Alert["Alerta +\\nFoto + GPS"]
+    Alert --> Incidence["POST /api/\\nincidence"]`,
     links: {},
   },
   {
