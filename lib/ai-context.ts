@@ -3,10 +3,15 @@ import { projects, timeline, stack } from '@/lib/data';
 
 function projectsSummary() {
   return projects
-    .map(
-      (p) =>
-        `- ${p.name} (${p.badge.label}): ${p.description} Tecnologias: ${p.tags.join(', ')}.`,
-    )
+    .map((p) => {
+      const highlights = p.highlights.length
+        ? `\n  Destaques: ${p.highlights.join('; ')}.`
+        : '';
+      const challenges = p.challenges.length
+        ? `\n  Desafios técnicos: ${p.challenges.join('; ')}.`
+        : '';
+      return `- ${p.name} (${p.badge.label}): ${p.description} Tecnologias: ${p.tags.join(', ')}.${highlights}${challenges}`;
+    })
     .join('\n');
 }
 
