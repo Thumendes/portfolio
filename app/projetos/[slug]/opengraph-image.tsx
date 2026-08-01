@@ -1,6 +1,6 @@
 // app/projetos/[slug]/opengraph-image.tsx
 import { ImageResponse } from 'next/og';
-import { loadGoogleFont } from '@/lib/og-font';
+import { getBricolageBold, getDMMonoMedium } from '@/lib/og-fonts';
 import { projects } from '@/lib/data';
 
 export const alt = 'Preview do projeto — thumendes.com.br';
@@ -20,10 +20,7 @@ export default async function Image({ params }: ImageProps) {
   const description = project?.description ?? '';
   const tags = project?.tags.slice(0, 5).join('   ·   ') ?? '';
 
-  const [bold, mono] = await Promise.all([
-    loadGoogleFont('Bricolage+Grotesque', 700, `${title} // thumendes`),
-    loadGoogleFont('DM+Mono', 500, `${badge}${description}${tags}thumendes.com.br`),
-  ]);
+  const [bold, mono] = await Promise.all([getBricolageBold(), getDMMonoMedium()]);
 
   return new ImageResponse(
     (

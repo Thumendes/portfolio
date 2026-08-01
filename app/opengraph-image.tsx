@@ -1,6 +1,6 @@
 // app/opengraph-image.tsx
 import { ImageResponse } from 'next/og';
-import { loadGoogleFont } from '@/lib/og-font';
+import { getBricolageBold, getDMMonoMedium } from '@/lib/og-fonts';
 
 export const alt = 'Arthur Mendes — Desenvolvedor Full-Stack Sênior';
 export const size = { width: 1200, height: 630 };
@@ -11,10 +11,7 @@ export default async function Image() {
   const subtitle = 'DESENVOLVEDOR FULL-STACK SÊNIOR';
   const domain = 'thumendes.com.br';
 
-  const [bold, mono] = await Promise.all([
-    loadGoogleFont('Bricolage+Grotesque', 700, `${title} // thumendes`),
-    loadGoogleFont('DM+Mono', 500, `${subtitle}${domain}`),
-  ]);
+  const [bold, mono] = await Promise.all([getBricolageBold(), getDMMonoMedium()]);
 
   return new ImageResponse(
     (
