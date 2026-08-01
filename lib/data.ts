@@ -225,28 +225,38 @@ export const projects: ProjectData[] = [
     name: 'GPTexto',
     badge: { label: 'Editor Visual', color: 'cyan' },
     description:
-      'Editor visual no-code para criação de pipelines de geração de texto com IA, com 15+ tipos de nós e React Flow.',
+      'Plataforma SaaS multi-tenant de geração de conteúdo com IA — editor visual de fluxos com 15+ tipos de nós, processamento em lote via Kafka e publicação automática no WordPress.',
     fullDescription: [
-      'GPTexto permite criar pipelines de geração de texto arrastando e conectando nós. Cada nó tem uma responsabilidade: entrada, transformação, LLM, condicional ou saída.',
-      'O executor de grafos usa topological sort para garantir ordem de execução correta em DAGs. Estado de execução é mantido em Zustand com React Flow, usando memoização agressiva para performance.',
+      'GPTexto é uma plataforma SaaS multi-tenant onde empresas montam pipelines visuais de geração de conteúdo — grafos de nós que combinam chamadas a LLMs, geração de imagem, scraping, tradução e mais, produzindo artigos, posts, áudio, PDF ou publicações diretas no WordPress. Cada instância é isolada por hostname, com usuários, prompts, chaves de API e configuração visual próprios.',
+      'O coração do sistema é o editor visual sobre React Flow, com mais de 15 tipos de nós — Prompt (LLM), Image Prompt (DALL-E, Leonardo AI, GetImg), Audio Generator (AWS Polly), Translate, HTTP, Scraping, PDF, WordPress, entre outros. O fluxo é serializado como JSON e percorrido em ordem topológica pelo executor, com versionamento (FlowVersion) e variáveis tipadas conectando a saída de um nó à entrada do próximo.',
+      'É um monorepo Turborepo com Next.js 14 no frontend e serviços Node.js independentes — server (Express + tRPC), executor (roda os fluxos), queue (consumidor Kafka), scraping (Crawlee + Playwright) e files — comunicando via tRPC e Kafka sobre Prisma/MariaDB. O processamento em lote importa uma planilha de variáveis, publica jobs no Kafka e o executor roda o fluxo item a item, podendo publicar o resultado direto no WordPress configurado.',
     ],
-    highlights: [],
+    highlights: [
+      'Editor visual de fluxos sobre React Flow com 15+ tipos de nós (LLM, imagem, áudio, scraping, PDF, WordPress...)',
+      'Multi-tenant por hostname — cada projeto com usuários, prompts, chaves de API e ACL isolados',
+      'Processamento em lote assíncrono via Kafka: planilha de variáveis → jobs → executor → publicação',
+      'Versionamento de fluxos (FlowVersion) com ativação e restauração de versões anteriores',
+      'Integrações com OpenAI, Leonardo AI, GetImg, AWS Polly, WordPress REST API e Asaas',
+    ],
     challenges: [
-      'Execução de DAGs com dependências paralelas e tratamento de falhas em nós individuais',
-      'Performance com React Flow em grafos de 50+ nós sem re-renders desnecessários',
+      'Executar grafos de fluxo em ordem topológica com variáveis tipadas fluindo entre nós heterogêneos',
+      'Isolamento multi-tenant completo por hostname em todas as entidades do banco, do JWT ao conteúdo gerado',
+      'Orquestrar geração em lote de forma assíncrona (Kafka → executor) sem travar o painel admin em processos grandes',
     ],
     learnings: [
-      'Algoritmo de topological sort para execução de pipelines com dependências paralelas',
-      'Padrões de estado com Zustand + React Flow para minimizar re-renders em grafos complexos',
+      'Arquitetura de monorepo com serviços independentes (server, executor, queue, scraping) comunicando via tRPC e Kafka',
+      'Modelagem de multi-tenancy por hostname isolando dados, autenticação e ACL granular por projeto',
     ],
-    tags: ['Next.js', 'React Flow', 'Vercel AI SDK', 'Zustand', 'TypeScript'],
-    diagram: `graph LR
-    Input["Input\\nNode"] --> Template["Template\\nNode"]
-    Template --> AI["AI Node\\n(LLM call)"]
-    AI --> Condition["Condition\\nNode"]
-    Condition -->|true| Out1["Output\\nNode A"]
-    Condition -->|false| Out2["Output\\nNode B"]
-    AI --> Claude["Claude\\nAPI"]`,
+    tags: ['Next.js 14', 'React Flow', 'tRPC', 'Kafka', 'Prisma', 'Crawlee'],
+    diagram: `graph TD
+    Client["Next.js\\nClient + Admin"] --> Server["Express + tRPC\\nServer"]
+    Server --> Executor["Executor\\n(Flow Engine)"]
+    Server --> Files["Files\\n(S3, PDF, imagens)"]
+    Server --> Scraping["Scraping\\n(Crawlee)"]
+    Server -->|Kafka| Queue["Queue\\nConsumer"]
+    Queue --> Executor
+    Executor --> DB[("MariaDB\\nPrisma")]
+    Executor --> WordPress["WordPress\\nREST API"]`,
     links: {},
   },
   {
