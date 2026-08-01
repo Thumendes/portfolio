@@ -93,8 +93,8 @@
   --color-subtle: var(--subtle);
   --color-border: var(--border-color);
   --color-border-muted: var(--border-muted-color);
-  --color-accent: #2563eb;
-  --color-accent-dim: #1d4ed8;
+  --color-accent: var(--foreground);
+  --color-accent-dim: var(--muted);
 
   /* Font families — variables injected by next/font/google on <body> */
   --font-display: var(--font-dm-serif), serif;
@@ -154,41 +154,3 @@
   }
 }
 
-/* ── Badge color variables — full spectrum, spread across categories ── */
-[data-badge="red"]    { --badge-bg: #FBE7E7; --badge-fg: #B3261E; --badge-solid: #E5484D; }
-[data-badge="coral"]  { --badge-bg: #FAECE7; --badge-fg: #993C1D; --badge-solid: #F0763B; }
-[data-badge="amber"]  { --badge-bg: #FAEEDA; --badge-fg: #854F0B; --badge-solid: #F5A524; }
-[data-badge="yellow"] { --badge-bg: #FBF3D0; --badge-fg: #816409; --badge-solid: #F2CB1D; }
-[data-badge="green"]  { --badge-bg: #EAF3DE; --badge-fg: #3B6D11; --badge-solid: #64B23A; }
-[data-badge="teal"]   { --badge-bg: #E1F5EE; --badge-fg: #0F6E56; --badge-solid: #12A583; }
-[data-badge="cyan"]   { --badge-bg: #E1F4F6; --badge-fg: #0B6E7F; --badge-solid: #17ADC4; }
-[data-badge="blue"]   { --badge-bg: #E6F1FB; --badge-fg: #185FA5; --badge-solid: #3B82F6; }
-[data-badge="indigo"] { --badge-bg: #E9EBFC; --badge-fg: #3F4FB8; --badge-solid: #6366F1; }
-[data-badge="purple"] { --badge-bg: #EEEDFE; --badge-fg: #534AB7; --badge-solid: #8B5CF6; }
-[data-badge="pink"]   { --badge-bg: #FCE7F3; --badge-fg: #B0356B; --badge-solid: #EC4899; }
-
-.dark [data-badge="red"]    { --badge-bg: #3d1414; --badge-fg: #f28b8b; --badge-solid: #E5484D; }
-.dark [data-badge="coral"]  { --badge-bg: #4a1e0e; --badge-fg: #f59070; --badge-solid: #F0763B; }
-.dark [data-badge="amber"]  { --badge-bg: #4a2c06; --badge-fg: #f5c97a; --badge-solid: #F5A524; }
-.dark [data-badge="yellow"] { --badge-bg: #423608; --badge-fg: #ecd06c; --badge-solid: #F2CB1D; }
-.dark [data-badge="green"]  { --badge-bg: #1e3a08; --badge-fg: #90c95a; --badge-solid: #64B23A; }
-.dark [data-badge="teal"]   { --badge-bg: #0a3d30; --badge-fg: #5ecfad; --badge-solid: #12A583; }
-.dark [data-badge="cyan"]   { --badge-bg: #073841; --badge-fg: #5cd3e8; --badge-solid: #17ADC4; }
-.dark [data-badge="blue"]   { --badge-bg: #1e3a5f; --badge-fg: #7cb9f0; --badge-solid: #3B82F6; }
-.dark [data-badge="indigo"] { --badge-bg: #26265f; --badge-fg: #a5adf5; --badge-solid: #6366F1; }
-.dark [data-badge="purple"] { --badge-bg: #2a2660; --badge-fg: #a9a4f5; --badge-solid: #8B5CF6; }
-.dark [data-badge="pink"]   { --badge-bg: #4a1638; --badge-fg: #f291c8; --badge-solid: #EC4899; }
-
-/* ── Marquee ── */
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-.animate-marquee { animation: marquee 32s linear infinite; }
-
-/* Terminal cursor blink */
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0; }
-}
-.cursor-blink { animation: blink 1s step-end infinite; }

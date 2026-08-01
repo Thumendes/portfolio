@@ -34,7 +34,7 @@ export function ResumeDropdown({ className }: ResumeDropdownProps) {
         onClick={() => setOpen((o) => !o)}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 cursor-pointer bg-accent text-white hover:bg-accent-dim border border-accent"
+        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 cursor-pointer bg-foreground text-background hover:opacity-85 border border-foreground"
       >
         <IconDownload size={15} />
         Baixar currículo

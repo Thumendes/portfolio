@@ -2,7 +2,6 @@
 import { Nav } from '@/components/sections/Nav';
 import { Hero } from '@/components/sections/Hero';
 import { Chat } from '@/components/sections/Chat';
-import { Stack } from '@/components/sections/Stack';
 import { HowIWork } from '@/components/sections/HowIWork';
 import { Projects } from '@/components/sections/Projects';
 import { Timeline } from '@/components/sections/Timeline';
@@ -15,7 +14,6 @@ export default function Home() {
       <main>
         <Hero />
         <Chat />
-        <Stack />
         <HowIWork />
         <Projects />
         <Timeline />

@@ -1,7 +1,6 @@
 // components/sections/ProjectCard.tsx
 import Link from 'next/link';
 import { type ProjectData } from '@/lib/data';
-import { CategoryBadge } from '@/components/ui/CategoryBadge';
 import { Tag } from '@/components/ui/Tag';
 import { cn } from '@/lib/utils';
 
@@ -23,7 +22,6 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
       >
         {/* Left column */}
         <div className="flex flex-col gap-3">
-          <CategoryBadge label={project.badge.label} color={project.badge.color} />
           <h3 className="text-[16px] font-medium font-body text-foreground">
             {project.name}
           </h3>
@@ -61,7 +59,6 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
         className,
       )}
     >
-      <CategoryBadge label={project.badge.label} color={project.badge.color} />
       <h3 className="text-[16px] font-medium font-body text-foreground">
         {project.name}
       </h3>

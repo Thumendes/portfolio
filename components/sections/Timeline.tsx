@@ -27,7 +27,7 @@ function TimelineItem({ item, index }: { item: ExperienceItem; index: number }) 
         )}
       >
         {item.active && (
-          <span className="w-1.5 h-1.5 rounded-full bg-white" />
+          <span className="w-1.5 h-1.5 rounded-full bg-background" />
         )}
         {item.type === 'education' && !item.active && (
           <IconSchool size={8} className="text-muted" />

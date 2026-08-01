@@ -1,23 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import dynamic from 'next/dynamic';
-import {
-  IconBrandGithub,
-  IconMail,
-  IconBriefcase,
-  IconMapPin,
-  IconSchool,
-} from '@tabler/icons-react';
+import { IconBrandGithub, IconMail } from '@tabler/icons-react';
 import { LinkButton } from '@/components/ui/LinkButton';
 import { ResumeDropdown } from '@/components/ui/ResumeDropdown';
-import { PulsingDot } from '@/components/effects/PulsingDot';
-import { TechMarquee } from '@/components/effects/TechMarquee';
-
-const Terminal = dynamic(
-  () => import('@/components/effects/Terminal').then((m) => ({ default: m.Terminal })),
-  { ssr: false },
-);
+import { DynamicWordField } from '@/components/effects/DynamicWordField';
 
 const fade = (delay = 0) => ({
   initial: { opacity: 0 },
@@ -37,41 +24,10 @@ const fadeLeft = (delay = 0) => ({
   transition: { duration: 0.4, delay },
 });
 
-const fadeRight = (delay = 0) => ({
-  initial: { opacity: 0, x: 20 },
-  animate: { opacity: 1, x: 0 },
-  transition: { duration: 0.4, delay },
-});
-
-const pills = [
-  {
-    icon: <PulsingDot />,
-    primary: 'Disponível',
-    secondary: 'para oportunidades',
-  },
-  {
-    icon: <IconBriefcase size={14} className="text-muted" />,
-    primary: '4+',
-    secondary: 'anos em produção',
-  },
-  {
-    icon: <IconMapPin size={14} className="text-muted" />,
-    primary: 'BH',
-    secondary: 'híbrido / presencial',
-  },
-  {
-    icon: <IconSchool size={14} className="text-muted" />,
-    primary: 'PUC Minas',
-    secondary: 'Eng. Software',
-  },
-];
-
 export function Hero() {
   return (
     <section id="sobre" className="pt-20 pb-12">
-      <div className="max-w-5xl mx-auto px-6 grid lg:grid-cols-[1fr_auto] gap-12 items-start">
-      {/* Left column */}
-      <div className="space-y-6">
+      <div className="max-w-5xl mx-auto px-6 space-y-6">
         <motion.p
           {...fadeLeft(0)}
           className="text-[12px] font-mono uppercase tracking-widest text-accent"
@@ -99,10 +55,7 @@ export function Hero() {
 
         <motion.div {...fadeUp(0.45)} className="flex flex-wrap gap-3">
           <ResumeDropdown />
-          <LinkButton
-            variant="secondary"
-            href="https://github.com/Thumendes"
-          >
+          <LinkButton variant="secondary" href="https://github.com/Thumendes">
             <IconBrandGithub size={15} />
             GitHub
           </LinkButton>
@@ -111,41 +64,15 @@ export function Hero() {
             Contato
           </LinkButton>
         </motion.div>
-
-        <motion.div {...fade(0.6)} className="pt-4">
-          <Terminal />
-        </motion.div>
-      </div>
-
-      {/* Right column — status pills */}
-      <div className="flex flex-col gap-3 lg:pt-12">
-        {pills.map((pill, i) => (
-          <motion.div
-            key={i}
-            {...fadeRight(0.5 + i * 0.08)}
-            className="flex items-center gap-3 px-4 py-3 rounded-full border border-border bg-background whitespace-nowrap"
-          >
-            <span className="flex-shrink-0">{pill.icon}</span>
-            <div className="flex flex-col">
-              <span className="text-[13px] font-medium font-body text-foreground leading-none">
-                {pill.primary}
-              </span>
-              <span className="text-[11px] font-mono text-subtle leading-none mt-0.5">
-                {pill.secondary}
-              </span>
-            </div>
-          </motion.div>
-        ))}
-      </div>
       </div>
 
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.7 }}
+        transition={{ duration: 0.5, delay: 0.6 }}
         className="mt-12"
       >
-        <TechMarquee />
+        <DynamicWordField />
       </motion.div>
     </section>
   );

@@ -4,19 +4,18 @@ import { cn } from '@/lib/utils';
 
 interface CategoryBadgeProps {
   label: string;
-  color: CategoryColor;
+  color?: CategoryColor;
   className?: string;
 }
 
-export function CategoryBadge({ label, color, className }: CategoryBadgeProps) {
+export function CategoryBadge({ label, className }: CategoryBadgeProps) {
   return (
     <span
-      data-badge={color}
       className={cn(
         'inline-block px-3 py-1 rounded-full text-xs font-mono font-medium leading-none',
+        'bg-secondary text-muted border border-border-muted',
         className,
       )}
-      style={{ background: 'var(--badge-bg)', color: 'var(--badge-fg)' }}
     >
       {label}
     </span>
