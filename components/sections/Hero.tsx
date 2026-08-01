@@ -26,8 +26,10 @@ const fadeLeft = (delay = 0) => ({
 
 export function Hero() {
   return (
-    <section id="sobre" className="pt-20 pb-12">
-      <div className="max-w-5xl mx-auto px-6 space-y-6">
+    <section id="sobre" className="relative overflow-hidden border-b border-border-muted">
+      <DynamicWordField />
+
+      <div className="relative z-10 max-w-5xl mx-auto px-6 py-24 md:py-32 space-y-6">
         <motion.p
           {...fadeLeft(0)}
           className="text-[12px] font-mono uppercase tracking-widest text-accent"
@@ -41,7 +43,7 @@ export function Hero() {
         >
           Arthur
           <br />
-          <em className="not-italic italic text-accent">Mendes</em>
+          <em className="italic text-accent">Mendes</em>
         </motion.h1>
 
         <motion.p
@@ -65,15 +67,6 @@ export function Hero() {
           </LinkButton>
         </motion.div>
       </div>
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.6 }}
-        className="mt-12"
-      >
-        <DynamicWordField />
-      </motion.div>
     </section>
   );
 }

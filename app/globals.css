@@ -97,7 +97,7 @@
   --color-accent-dim: var(--muted);
 
   /* Font families — variables injected by next/font/google on <body> */
-  --font-display: var(--font-dm-serif), serif;
+  --font-display: var(--font-display-grotesque), sans-serif;
   --font-body: var(--font-outfit), sans-serif;
   --font-mono: var(--font-dm-mono), monospace;
   --font-heading: var(--font-sans);

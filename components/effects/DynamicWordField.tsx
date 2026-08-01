@@ -1,7 +1,7 @@
 // components/effects/DynamicWordField.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const WORDS = [
@@ -15,59 +15,99 @@ const WORDS = [
   'Playwright & automação',
   'SaaS multi-tenant',
   'Streaming em tempo real',
+  'Monorepo com Turborepo',
+  'APIs type-safe',
 ];
 
-const SLOTS: { top: string; left: string; size: string }[] = [
-  { top: '18%', left: '6%', size: 'text-[15px] md:text-[18px]' },
-  { top: '68%', left: '12%', size: 'text-[13px] md:text-[15px]' },
-  { top: '12%', left: '42%', size: 'text-[17px] md:text-[21px]' },
-  { top: '72%', left: '48%', size: 'text-[14px] md:text-[16px]' },
-  { top: '30%', left: '72%', size: 'text-[15px] md:text-[18px]' },
-  { top: '62%', left: '80%', size: 'text-[13px] md:text-[15px]' },
-];
+const SIZES = ['text-[13px] md:text-[15px]', 'text-[15px] md:text-[18px]', 'text-[17px] md:text-[21px]'];
 
-function WordSlot({
-  slot,
-  offset,
-  interval,
-}: {
-  slot: (typeof SLOTS)[number];
-  offset: number;
-  interval: number;
-}) {
-  const [index, setIndex] = useState(offset % WORDS.length);
+function randomBetween(min: number, max: number) {
+  return min + Math.random() * (max - min);
+}
+
+function pickWord(exclude: string) {
+  let next = exclude;
+  while (next === exclude) {
+    next = WORDS[Math.floor(Math.random() * WORDS.length)];
+  }
+  return next;
+}
+
+interface Spot {
+  word: string;
+  top: number;
+  left: number;
+  size: string;
+}
+
+function makeSpot(band: number, bandWidth: number, prevWord = ''): Spot {
+  // Keep words hugging the top/bottom edges so they don't collide with the
+  // centered hero copy.
+  const top = Math.random() < 0.5 ? randomBetween(4, 20) : randomBetween(80, 96);
+  return {
+    word: pickWord(prevWord),
+    top,
+    left: randomBetween(band * bandWidth + 2, (band + 1) * bandWidth - 2),
+    size: SIZES[Math.floor(Math.random() * SIZES.length)],
+  };
+}
+
+function FloatingWord({ band, bandWidth, initialDelay }: { band: number; bandWidth: number; initialDelay: number }) {
+  const [spot, setSpot] = useState<Spot | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
-    const id = setInterval(() => {
-      setIndex((i) => (i + 1) % WORDS.length);
-    }, interval);
-    return () => clearInterval(id);
-  }, [interval]);
+    const start = setTimeout(() => {
+      setSpot(makeSpot(band, bandWidth));
+    }, initialDelay + randomBetween(0, 600));
+    return () => clearTimeout(start);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!spot) return;
+    timeoutRef.current = setTimeout(
+      () => {
+        setSpot((prev) => makeSpot(band, bandWidth, prev?.word));
+      },
+      randomBetween(2200, 4200),
+    );
+    return () => clearTimeout(timeoutRef.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [spot]);
+
+  if (!spot) return null;
 
   return (
     <div
-      className="absolute -translate-x-1/2 -translate-y-1/2 max-w-[70%] md:max-w-[40%]"
-      style={{ top: slot.top, left: slot.left }}
+      className={`absolute -translate-x-1/2 -translate-y-1/2 max-w-[75%] md:max-w-[38%] pointer-events-none ${
+        band >= 4 ? 'hidden sm:block' : ''
+      }`}
+      style={{ top: `${spot.top}%`, left: `${spot.left}%` }}
     >
       <AnimatePresence mode="wait">
-        <motion.em
-          key={index}
+        <motion.span
+          key={spot.word}
           initial={{ opacity: 0, filter: 'blur(10px)' }}
           animate={{ opacity: 1, filter: 'blur(0px)' }}
           exit={{ opacity: 0, filter: 'blur(10px)' }}
           transition={{ duration: 1.1, ease: 'easeInOut' }}
-          className={`font-display not-italic italic text-muted whitespace-nowrap ${slot.size}`}
+          className={`font-display font-medium text-muted whitespace-nowrap ${spot.size}`}
         >
-          {WORDS[index]}
-        </motion.em>
+          {spot.word}
+        </motion.span>
       </AnimatePresence>
     </div>
   );
 }
 
+const SLOT_COUNT = 6;
+
 export function DynamicWordField() {
+  const bandWidth = 100 / SLOT_COUNT;
+
   return (
-    <div className="relative w-full h-[220px] md:h-[260px] overflow-hidden border-y border-border-muted">
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
       {/* Moving shadow blobs */}
       <motion.div
         aria-hidden
@@ -88,8 +128,8 @@ export function DynamicWordField() {
         transition={{ duration: 19, repeat: Infinity, ease: 'easeInOut' }}
       />
 
-      {SLOTS.map((slot, i) => (
-        <WordSlot key={i} slot={slot} offset={i} interval={3200 + i * 400} />
+      {Array.from({ length: SLOT_COUNT }, (_, i) => (
+        <FloatingWord key={i} band={i} bandWidth={bandWidth} initialDelay={i * 450} />
       ))}
     </div>
   );

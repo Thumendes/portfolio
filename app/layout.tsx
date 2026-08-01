@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { DM_Serif_Display, Outfit, DM_Mono, Geist } from 'next/font/google';
+import { Bricolage_Grotesque, Outfit, DM_Mono, Geist } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import './globals.css';
@@ -7,10 +7,10 @@ import { cn } from "@/lib/utils";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
-const dmSerifDisplay = DM_Serif_Display({
-  weight: '400',
+const displayFont = Bricolage_Grotesque({
+  weight: ['500', '600', '700'],
   subsets: ['latin'],
-  variable: '--font-dm-serif',
+  variable: '--font-display-grotesque',
   display: 'swap',
 });
 
@@ -68,7 +68,7 @@ export default function RootLayout({
         <ConsoleEasterEgg />
       </head>
       <body
-        className={`${dmSerifDisplay.variable} ${outfit.variable} ${dmMono.variable}`}
+        className={`${displayFont.variable} ${outfit.variable} ${dmMono.variable}`}
       >
         <ThemeProvider
           attribute="class"
