@@ -147,29 +147,38 @@ export const projects: ProjectData[] = [
     name: 'Claro Bot Evo',
     badge: { label: 'Automação · IA', color: 'red' },
     description:
-      'Bot WhatsApp para a Claro Brasil com filtro inteligente de resultados via LLM para reduzir ruído nas respostas de atendimento.',
+      'Bot de monitoramento automatizado de preços de concorrentes para a Claro — coleta preços de aparelhos e acessórios em grandes varejistas com scraping, filtro por LLM e notificação via WhatsApp.',
     fullDescription: [
-      'Bot de automação para atendimento interno da Claro Brasil via WhatsApp. O diferencial é um pipeline de filtragem com LLM que avalia relevância das respostas antes de enviá-las.',
-      'O sistema processa centenas de consultas simultâneas com filas BullMQ. O Claude classifica e filtra resultados em <200ms, garantindo que apenas respostas relevantes chegam ao usuário.',
+      'Claro Bot Evo monitora periodicamente os preços de concorrentes da Claro em grandes varejistas online (Americanas, Magalu, Amazon, FastShop, iPlace) coletando valor à vista, a prazo e via Pix de aparelhos e acessórios, além de sinalizar produto sem estoque, link quebrado ou site em manutenção. Os dados alimentam a "API Matriz" da Claro para análise interna de posicionamento de preço.',
+      'O bot opera em dois modos: caça-links busca novos links de produto e filtra os resultados com um LLM (GPT-4.1-mini) para evitar falsos positivos entre variações próximas de modelo; roda-links revisita links já cadastrados para atualizar preços. Construído com Crawlee + Playwright, com evasão anti-bot via stealth plugin, fingerprints aleatórios de browser e otimização de tráfego bloqueando recursos desnecessários.',
+      'Cada varejista implementa uma interface comum (VarejoBotConfig) descoberta automaticamente via glob — adicionar um novo player é só criar o arquivo. Um servidor oRPC expõe start/subscribe via SSE para acompanhar execuções em tempo real, métricas são persistidas por rodada e um resumo é enviado por WhatsApp via Evolution API.',
     ],
-    highlights: [],
+    highlights: [
+      'Dois modos de execução: caça de novos links de produto e atualização de preços de links já cadastrados',
+      'Filtro de resultados de busca com LLM (GPT-4.1-mini) para evitar falsos positivos entre variações de modelo',
+      'Evasão anti-bot com stealth plugin, fingerprints aleatórios e pool de sessões, sobre Crawlee + Playwright',
+      'Servidor oRPC com stream SSE (start/subscribe) para acompanhar execuções em tempo real',
+      'Métricas de execução persistidas por rodada e resumo enviado via WhatsApp (Evolution API)',
+    ],
     challenges: [
-      'Filtrar resultados com LLM sem latência perceptível — cache semântico para queries repetidas',
-      'Gerenciar estado de conversas longas com timeout e re-engajamento automático',
+      'Filtrar resultados de busca com LLM sem confundir variações próximas de modelo (ex: 128GB vs 256GB, Pro vs não-Pro)',
+      'Evasão de bloqueio anti-bot em cinco varejistas diferentes, cada um com layout e proteções próprias',
+      'Otimizar tráfego de rede bloqueando recursos supérfluos sem quebrar o parsing de preço em páginas de produto',
     ],
     learnings: [
-      'Pipelines de validação LLM como middleware de qualidade, não como lógica principal',
-      'Cache semântico com embeddings para reduzir chamadas à API em queries similares',
+      'Arquitetura plugin-based com auto-descoberta via glob para escalar o número de varejistas monitorados sem acoplamento',
+      'Uso de LLM como camada de validação/filtro (generateObject), não como lógica de negócio principal',
     ],
-    tags: ['Node.js', 'BullMQ', 'Redis', 'Claude API', 'WhatsApp Business API', 'MariaDB'],
+    tags: ['Bun', 'Crawlee', 'Playwright', 'GPT-4.1-mini', 'oRPC', 'Zod', 'Arktype'],
     diagram: `graph TD
-    WA["WhatsApp\\nWebhook"] --> Engine["Bot Engine\\n(Node.js)"]
-    Engine --> Queue["BullMQ\\nQueue"]
-    Queue --> Filter["LLM Filter\\n(Claude)"]
-    Filter --> Results["Filtered\\nResults"]
-    Results --> Reply["Reply\\nHandler"]
-    Reply --> WA
-    Engine --> DB[("MariaDB")]`,
+    Matriz[("API Matriz")] --> Bot["Bot\\n(Crawlee + Playwright)"]
+    Bot --> Search["caça-links\\nbusca + filtro LLM"]
+    Bot --> Update["roda-links\\nvisita direta"]
+    Search --> Product["Scraping de\\nProduto"]
+    Update --> Product
+    Product --> Store["store()"]
+    Store --> Matriz
+    Store --> Evolution["Evolution API\\nWhatsApp"]`,
     links: {},
   },
   {
