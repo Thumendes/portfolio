@@ -63,40 +63,43 @@ export const projects: ProjectData[] = [
   {
     id: 'abpf',
     name: 'ABPF',
-    badge: { label: 'Plataforma · SaaS', color: 'blue' },
+    badge: { label: 'Plataforma · Turismo Ferroviário', color: 'blue' },
     featured: true,
     description:
-      'Plataforma SaaS para associações de bandas filarmônicas com controle de membros, eventos e alocação inteligente de assentos.',
+      'Plataforma full-stack para a Associação Brasileira de Preservação Ferroviária: venda de ingressos com alocação automática de assentos, pagamentos, bilhetes em PDF com QR Code e excursões escolares.',
     fullDescription: [
-      'ABPF é uma plataforma completa para gestão de associações de bandas filarmônicas. O sistema permite que cada associação gerencie seus membros por instrumento e realize eventos musicais com controle preciso de alocação de assentos.',
-      'O núcleo técnico é um algoritmo proprietário de alocação que respeita restrições de instrumento, seção e proximidade entre músicos. O algoritmo roda de forma assíncrona via BullMQ, possibilitando recálculos sem bloquear a UI.',
-      'Construído como monorepo Turborepo com 8 pacotes compartilhados — auth, db, email, ui, validators, config, workers e web — com isolamento completo entre tenants e integração com Cielo para pagamentos.',
+      'ABPF é a plataforma de gestão de passeios de trem turístico da Associação Brasileira de Preservação Ferroviária. Cobre o ciclo completo: criação e configuração de passeios, venda de ingressos, processamento de pagamentos, emissão de bilhetes em PDF com QR Code, gestão de excursões escolares e check-in via app mobile.',
+      'É um monorepo Turborepo com três aplicações — web (Next.js 16, dashboard admin + portal público), native (Expo/React Native para operadores e validadores) e worker (Bun + BullMQ para tarefas assíncronas) — e oito pacotes compartilhados, com uma API oRPC de cerca de 30 routers no centro do sistema.',
+      'O núcleo técnico é o serviço de alocação de assentos, que aloca automaticamente passageiros em assentos contíguos respeitando blocos exclusivos (SeatGroup) e restrições de tipo de ingresso por vagão. Pagamentos rodam pela Cielo (cartão, PIX e boleto) com status sincronizado em tempo real via SSE, e bilhetes com QR Code assinado por HMAC são validados offline no check-in do app mobile.',
     ],
     highlights: [
-      'Algoritmo de alocação de assentos com restrições de instrumento e seção',
-      'Multi-tenant com isolamento completo por associação via Prisma middleware',
-      'Integração Cielo para pagamento de anuidades e ingressos de eventos',
-      'Workers BullMQ para processamento assíncrono de recálculos de alocação',
-      'Monorepo Turborepo com 8 pacotes — build incremental com cache remoto',
+      'Alocação automática de assentos contíguos respeitando SeatGroup e restrições por vagão',
+      '~30 routers oRPC cobrindo passeios, pedidos, pagamentos, excursões e frota ferroviária',
+      'Pagamentos Cielo (cartão parcelado, PIX e boleto) com status em tempo real via SSE',
+      'App mobile Expo para operadores com check-in por QR Code assinado com HMAC',
+      'Workers BullMQ geram PDFs de bilhetes e excursões escolares de forma assíncrona',
     ],
     challenges: [
-      'Algoritmo de alocação com restrições aninhadas (instrumento → seção → fileira) sem conflito entre membros',
-      'Isolamento de dados multi-tenant em banco único usando Prisma middleware transparente',
+      'Algoritmo de alocação de assentos contíguos com restrições aninhadas (SeatGroup → tipo de ingresso → vagão) sem conflito entre passageiros',
+      'Sincronização de status de pagamento em tempo real entre webhook da Cielo, workers e clientes via SSE',
+      'Geração de QR Code assinado com HMAC, validado offline no app mobile durante o check-in',
     ],
     learnings: [
-      'Modelagem de domínio rico em TypeScript para regras de negócio complexas com invariantes',
-      'Estratégias de multi-tenancy em SaaS single-database com Prisma e row-level isolation',
+      'Modelagem de domínio complexo em Prisma multi-arquivo, com soft-delete e filtragem automática via middleware',
+      'Arquitetura de monorepo com oRPC compartilhando tipos de ponta a ponta entre web, mobile e workers',
     ],
-    tags: ['Next.js', 'Prisma', 'BullMQ', 'Redis', 'Cielo', 'Turborepo', 'MySQL'],
+    tags: ['Next.js 16', 'Expo', 'oRPC', 'Prisma 7', 'BullMQ', 'Cielo', 'Better-Auth', 'Turborepo'],
     diagram: `graph TD
-    Client["Next.js Client"] --> API["App Router\\nAPI Routes"]
-    API --> BullMQ["BullMQ\\nWorkers"]
-    API --> Prisma["Prisma ORM"]
-    BullMQ --> Redis[("Redis")]
-    BullMQ --> Seats["Seat Allocation\\nAlgorithm"]
-    Seats --> Prisma
-    Prisma --> MySQL[("MySQL")]
-    API --> Cielo["Cielo\\nPayments"]`,
+    Web["Next.js Web\\n(admin + público)"] --> API["oRPC API\\n(~30 routers)"]
+    Native["Expo App\\n(operadores)"] --> API
+    API --> Seat["Seat Allocation\\nService"]
+    API --> DB[("MySQL\\nPrisma")]
+    API --> Queue["BullMQ\\nQueues"]
+    Queue --> Worker["Bun Worker"]
+    Worker --> Ticket["Ticket PDF\\n+ QR HMAC"]
+    Worker --> R2[("Cloudflare R2")]
+    API --> Cielo["Cielo\\nPagamentos"]
+    API --> SSE["SSE\\npubsub"]`,
     links: {},
   },
   {

@@ -88,13 +88,18 @@ function FloatingWord({ band, bandWidth, initialDelay }: { band: number; bandWid
       <AnimatePresence mode="wait">
         <motion.span
           key={spot.word}
-          initial={{ opacity: 0, filter: 'blur(10px)' }}
-          animate={{ opacity: 1, filter: 'blur(0px)' }}
-          exit={{ opacity: 0, filter: 'blur(10px)' }}
-          transition={{ duration: 1.1, ease: 'easeInOut' }}
-          className={`font-display font-medium text-muted whitespace-nowrap ${spot.size}`}
+          initial={{ opacity: 0, filter: 'blur(11px)' }}
+          animate={{ opacity: 1, filter: 'blur(1.5px)', transition: { duration: 1.1, ease: 'easeIn' } }}
+          exit={{ opacity: 0, filter: 'blur(11px)', transition: { duration: 1, ease: 'easeOut' } }}
+          className="block"
         >
-          {spot.word}
+          <motion.span
+            animate={{ x: [0, 10, -8, 4, 0], y: [0, -6, 5, -3, 0] }}
+            transition={{ duration: randomBetween(7, 11), repeat: Infinity, ease: 'easeInOut' }}
+            className={`font-display font-medium text-muted whitespace-nowrap block ${spot.size}`}
+          >
+            {spot.word}
+          </motion.span>
         </motion.span>
       </AnimatePresence>
     </div>
